@@ -17,6 +17,15 @@ app.use(express.json());
      try{
          await client.connect();
          const userCollection = client.db('jekonoName').collection('user');
+
+         //Add new user that means A user add into database and data get from frontend'
+         app.post('/adduser', async(req,res)=>{
+            const newUser = req.body;
+            console.log('adding new user', newUser)
+            const result = await userCollection.insertOne(newUser);
+            res.send(result)
+         })
+         
         
      }finally{
 
