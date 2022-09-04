@@ -36,6 +36,34 @@ app.use(express.json());
             res.send(users);
          });
 
+        //Get user By id
+
+        app.get(`/user/:id`, async(req,res) => {
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)};
+            const result = await userCollection.findOne(query);
+            res.send(result);
+
+        });
+
+        //update user
+
+        app.put(`/user/:id`, async(req, res ) => {
+            const id = req.params.id;
+            const updateUser = req.body;
+            const query = {_id: ObjectId(id)};
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: updateUser.name,
+                    email:updateUser.email,
+                }
+                
+            }
+            const result = await userCollection.updateOne(query, updateDoc,options);
+            res.send(result);
+        })
+
          // Delete User
 
          app.delete(`/user/:id`, async(req,res) =>{
