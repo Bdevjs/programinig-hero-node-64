@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 
- const uri = "mongodb+srv://mehadi:<mehadi10712>@programinighero.o6s5hxf.mongodb.net/test"
+ const uri = "mongodb+srv://mehadi:mehadi10712@programinighero.o6s5hxf.mongodb.net/?retryWrites=true&w=majority"
  const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
  async function run(){
@@ -19,11 +19,31 @@ app.use(express.json());
          const userCollection = client.db('jekonoName').collection('user');
 
          //Add new user that means A user add into database and data get from frontend'
-         app.post('/adduser', async(req,res)=>{
+         app.post('/user', async(req,res)=>{
             const newUser = req.body;
             console.log('adding new user', newUser)
             const result = await userCollection.insertOne(newUser);
             res.send(result)
+         })
+
+
+         //Get all user data from database using API
+
+         app.get('/user', async(req,res)=>{
+            const query = {};
+            const cursor = userCollection.find(query);
+            const users = await cursor.toArray();
+            res.send(users);
+         });
+
+         // Delete User
+
+         app.delete(`/user/:id`, async(req,res) =>{
+            
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)};
+            const result = await userCollection.deleteOne(query);
+            res.send(result);
          })
          
         
@@ -31,7 +51,9 @@ app.use(express.json());
 
 
      }
+     
  }
+ run().catch(console.dir); //I make a mistake in there
 
  //const users = [
 //     { id: 1, name: 'Sabana', email: 'sabana@gmail.com', phone: '0178888888' },
